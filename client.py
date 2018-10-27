@@ -11,14 +11,19 @@ import sys
 SERVER = 'localhost'
 ip = sys.argv[1]
 port = int(sys.argv[2])
-line= ' '.join(sys.argv[3::])
+#line = ' '.join(sys.argv[3::])
+register = sys.argv[3]
+sip_address = sys.argv[4]
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     my_socket.connect((SERVER, port))
-    print("Enviando:", line)
-    my_socket.send(bytes(line, 'utf-8') + b'\r\n')
-    data = my_socket.recv(1024)
-    print('Recibido -- ', data.decode('utf-8'))
+    if register == 'register':
+        line = 'REGISTER sip:' + sip_address + ' SIP/2.0\r\n\r\n'
+        print("Enviando:", line, end='')
+        my_socket.send(bytes(line, 'utf-8'))
+        data = my_socket.recv(1024)
+        print('Recibido -- ', data.decode('utf-8'), end='')
+       
 
 print("Socket terminado.")
