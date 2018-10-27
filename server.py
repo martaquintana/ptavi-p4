@@ -5,13 +5,14 @@ Clase (y programa principal) para un servidor de eco en UDP simple
 """
 
 import socketserver
+import sys
 
 
-class EchoHandler(socketserver.DatagramRequestHandler):
+class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
     Echo server class
     """
-
+    
     def handle(self):
         """
         handle method of the server class
@@ -20,11 +21,14 @@ class EchoHandler(socketserver.DatagramRequestHandler):
         self.wfile.write(b"Hemos recibido tu peticion")
         for line in self.rfile:
             print("El cliente nos manda ", line.decode('utf-8'))
-        print(int(self.client_address[1]))
+        print(self.client_address[0])
+        print((self.client_address[1]))
+        
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001 
     # and calls the EchoHandler class to manage the request
-    serv = socketserver.UDPServer(('', 6001), EchoHandler) 
+    port = int(sys.argv[1])
+    serv = socketserver.UDPServer(('', port), SIPRegisterHandler) 
     
     print("Lanzando servidor UDP de eco...")
     try:
