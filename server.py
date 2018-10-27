@@ -18,9 +18,11 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         handle method of the server class
         (all requests will be handled by this method)
         """
-        self.wfile.write(b"Hemos recibido tu peticion")
+        self.wfile.write(b"Hemos recibido tu peticion ")
         for line in self.rfile:
-            print("El cliente nos manda ", line.decode('utf-8'))
+            linea_decod = line.decode('utf-8').split(' ')
+            if linea_decod[0] == 'REGISTER':
+                self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
         print(self.client_address[0])
         print((self.client_address[1]))
         
