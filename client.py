@@ -30,8 +30,8 @@ try:
             print('Recibido -- ', data.decode('utf-8'), end='')
     print("Socket terminado.")
     
-except(IndexError):
+except IndexError:
     print("Usage:client ip puerto" + "register sip_address expires_value")       
 
-except(ConnectionRefusedError):
+except ConnectionRefusedError:
     print("Servidor apagado")

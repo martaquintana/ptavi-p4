@@ -16,9 +16,19 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     expires = ''
     def register2json(self):
         """
-        JSON file dictionary
+        JSON file
         """
         json.dump(self.dic_clients, open('registered.json','w'))
+        
+    def json2register(self):
+        """
+        Json file dictionary
+        """
+        try:
+            with open('registered.json','r') as file:
+                self.dic_clients = json.load(file)
+        except (FileNotFoundError, ValueError, json.decoder.JSONDecodeError):
+            pass
     
     def handle(self):
         """
