@@ -13,7 +13,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     SIP Register server class
     """
     dic_clients = {}
-    
+    expires = ''
     def register2json(self):
         """
         JSON file dictionary
@@ -34,26 +34,31 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
                 client_sip = linea_decod[1].split(":")
                 sip_address = client_sip[1]
-                self.dic_clients[sip_address] = self.client_address[0]
+                self.dic_clients[sip_address] = [self.client_address[0]]
             if linea_decod[0] == 'Expires:':
-                expires = linea_decod[1]
-                if expires == '0\r\n':
+                self.expires = linea_decod[1][:-2]
+                self.dic_clients[sip_address] += [self.expires]
+                if self.expires == '0':
                     del self.dic_clients[sip_address] 
-                print(expires)
+                
+                
                 
            
-        print(self.dic_clients)      
+            print(self.dic_clients)      
         print(self.client_address[0])
         print((self.client_address[1]))
         
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001 
-    # and calls the EchoHandler class to manage the request
-    port = int(sys.argv[1])
-    serv = socketserver.UDPServer(('', port), SIPRegisterHandler) 
-    
-    print("Lanzando servidor UDP de eco...")
+    # and calls the SIPRegisterHandler class to manage the request
     try:
-        serv.serve_forever()
-    except KeyboardInterrupt:
-        print("Finalizado servidor")
+        port = int(sys.argv[1])
+        serv = socketserver.UDPServer(('', port), SIPRegisterHandler) 
+    
+        print("Lanzando servidor UDP de eco...")
+        try:
+            serv.serve_forever()
+        except KeyboardInterrupt:
+            print("Finalizado servidor")
+    except:
+        print("Usage: phython3 server.py puerto")
