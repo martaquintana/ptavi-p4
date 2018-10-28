@@ -3,16 +3,23 @@
 """
 Clase (y programa principal) para un servidor de eco en UDP simple
 """
-
+import json
 import socketserver
 import sys
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
-    Echo server class
+    SIP Register server class
     """
-    diccclients = {}
+    dic_clients = {}
+    
+    def register2json(self):
+        """
+        JSON file dictionary
+        """
+        json.dump(self.dic_clients, open('registered.json','w'))
+    
     def handle(self):
         """
         handle method of the server class
@@ -27,15 +34,15 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
                 client_sip = linea_decod[1].split(":")
                 sip_address = client_sip[1]
-                self.diccclients[sip_address] = self.client_address[0]
+                self.dic_clients[sip_address] = self.client_address[0]
             if linea_decod[0] == 'Expires:':
                 expires = linea_decod[1]
                 if expires == '0\r\n':
-                    del self.diccclients[sip_address] 
+                    del self.dic_clients[sip_address] 
                 print(expires)
                 
            
-        print(self.diccclients)      
+        print(self.dic_clients)      
         print(self.client_address[0])
         print((self.client_address[1]))
         
