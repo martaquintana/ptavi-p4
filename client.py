@@ -29,7 +29,9 @@ try:
             data = my_socket.recv(1024)
             print('Recibido -- ', data.decode('utf-8'), end='')
     print("Socket terminado.")
-except:
+    
+except(IndexError):
     print("Usage:client ip puerto" + "register sip_address expires_value")       
 
-
+except(ConnectionRefusedError):
+    print("Servidor apagado")
