@@ -27,7 +27,6 @@ try:
                 'REGISTER sip:' + sip_address
                 + ' SIP/2.0\r\n' + 'Expires: ' + expires + '\r\n\r\n')
             print("Enviando:", line, end='')
-            print(expires)
             my_socket.send(bytes(line, 'utf-8'))
             data = my_socket.recv(1024)
             print('Recibido -- ', data.decode('utf-8'), end='')
