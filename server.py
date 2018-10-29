@@ -15,6 +15,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
     dic_clients = {}
     expires = ''
+    now = ''
     
     def register2json(self):
         """
@@ -22,7 +23,10 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         """
         json.dump(self.dic_clients, open('registered.json','w'))
         
-
+    def whohasexpired(self):
+		#Falta que borre del diccionario si ha expirado.
+        print(self.now)
+		
     def handle(self):
         """
         handle method of the server class
@@ -40,16 +44,18 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.dic_clients[sip_address] = {"address": self.client_address[0]}
             if linea_decod[0] == 'Expires:':
                 self.expires = linea_decod[1][:-2]
-                now = time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(time.time()))
+                self.now = time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(time.time()))
                 then= time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(time.time() + float((self.expires))))
-                print(now)
+                print(self.now)
                 print(then)
                 self.dic_clients[sip_address]["expires"] = then
                 if self.expires == '0':
                      del self.dic_clients[sip_address]
+				
                 
-                #Falta que borre del diccionario si ha expirado.
                 
+        print(self.dic_clients)
+        self.whohasexpired()        
         print(self.dic_clients) 
         self.register2json()
         print(self.client_address[0])
@@ -61,7 +67,7 @@ if __name__ == "__main__":
     # and calls the SIPRegisterHandler class to manage the request
     try:
         port = int(sys.argv[1])
-        serv = socketserver.UDPServer(('', port), SIPRegisterHandler) 
+        serv = socketserver.UDPServer(('', port), SIPRegisterHandler) #'' escucha en todas las direcciones ip que tenga la maquina
     
         print("Lanzando servidor UDP de eco...")
         try:
