@@ -23,8 +23,9 @@ try:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
         my_socket.connect((SERVER, port))
         if register == 'register':
-            line = 'REGISTER sip:' + sip_address +
-            ' SIP/2.0\r\n' + 'Expires: ' + expires + '\r\n\r\n'
+            line = (
+                'REGISTER sip:' + sip_address
+                + ' SIP/2.0\r\n' + 'Expires: ' + expires + '\r\n\r\n')
             print("Enviando:", line, end='')
             print(expires)
             my_socket.send(bytes(line, 'utf-8'))
