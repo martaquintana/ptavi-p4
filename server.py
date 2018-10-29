@@ -6,6 +6,7 @@ Clase (y programa principal) para un servidor de eco en UDP simple
 import json
 import socketserver
 import sys
+import time
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
@@ -14,22 +15,14 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
     dic_clients = {}
     expires = ''
+    
     def register2json(self):
         """
         JSON file
         """
         json.dump(self.dic_clients, open('registered.json','w'))
         
-    def json2register(self):
-        """
-        Json file dictionary
-        """
-        try:
-            with open('registered.json','r') as file:
-                self.dic_clients = json.load(file)
-        except (FileNotFoundError, ValueError, json.decoder.JSONDecodeError):
-            pass
-    
+
     def handle(self):
         """
         handle method of the server class
@@ -44,19 +37,23 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
                 client_sip = linea_decod[1].split(":")
                 sip_address = client_sip[1]
-                self.dic_clients[sip_address] = [self.client_address[0]]
+                self.dic_clients[sip_address] = {"address": self.client_address[0]}
             if linea_decod[0] == 'Expires:':
                 self.expires = linea_decod[1][:-2]
-                self.dic_clients[sip_address] += [self.expires]
-                if self.expires == '0':
-                    del self.dic_clients[sip_address] 
+                now = time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(time.time()))
+                then= time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(time.time() + float((self.expires))))
+                print(now)
+                print(then)
+                self.dic_clients[sip_address]["expires"] = then
+                new_dic = self.dic_clients[sip_address]
                 
+                #Falta que borre del diccionario si ha expirado.
                 
-                
-           
-            print(self.dic_clients)      
+        print(self.dic_clients) 
+        self.register2json()
         print(self.client_address[0])
         print((self.client_address[1]))
+
         
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001 
