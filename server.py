@@ -45,7 +45,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 print(now)
                 print(then)
                 self.dic_clients[sip_address]["expires"] = then
-                new_dic = self.dic_clients[sip_address]
+                if self.expires == '0':
+                     del self.dic_clients[sip_address]
                 
                 #Falta que borre del diccionario si ha expirado.
                 
