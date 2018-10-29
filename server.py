@@ -16,6 +16,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     dic_clients = {}
     expires = ''
     now = ''
+    list_sip_address=[]
     
     def register2json(self):
         """
@@ -26,6 +27,11 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     def whohasexpired(self):
 		#Falta que borre del diccionario si ha expirado.
         print(self.now)
+        for clients in self.list_sip_address:
+            if str(self.dic_clients[clients]["expires"]) < str(self.now):
+                 del self.dic_clients[clients]
+                 print(self.list_sip_address.index(clients))
+                 self.list_sip_address.remove(clients)
 		
     def handle(self):
         """
@@ -41,6 +47,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
                 client_sip = linea_decod[1].split(":")
                 sip_address = client_sip[1]
+                self.list_sip_address.append(sip_address)
                 self.dic_clients[sip_address] = {"address": self.client_address[0]}
             if linea_decod[0] == 'Expires:':
                 self.expires = linea_decod[1][:-2]
@@ -51,15 +58,12 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.dic_clients[sip_address]["expires"] = then
                 if self.expires == '0':
                      del self.dic_clients[sip_address]
-				
-                
-                
-        print(self.dic_clients)
         self.whohasexpired()        
         print(self.dic_clients) 
         self.register2json()
         print(self.client_address[0])
         print((self.client_address[1]))
+        self.whohasexpired()    
 
         
 if __name__ == "__main__":
@@ -76,3 +80,7 @@ if __name__ == "__main__":
             print("Finalizado servidor")
     except:
         print("Usage: phython3 server.py puerto")
+
+#ssh gamma07
+#python3 servidor.py
+#python client.py gamma07 6001
