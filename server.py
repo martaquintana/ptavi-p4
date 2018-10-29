@@ -37,8 +37,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                             '%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))
         print(now)
         for clients in self.dic_clients:
-            print(clients)
-            if str(self.dic_clients[clients]["expires"]) <= str(now):
+            if self.dic_clients[clients]["expires"] <= now:
                 del_list.append(clients)
         for clients in del_list:
             del self.dic_clients[clients]
