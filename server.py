@@ -72,10 +72,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                     del self.dic_clients[sip_address]
                 else:
                     self.whohasexpired()
-        print(self.dic_clients)
+        print("Nuevo usuario registrado")
         self.register2json()
-        print(self.client_address[0])
-        print((self.client_address[1]))
 
 
 if __name__ == "__main__":
@@ -84,7 +82,7 @@ if __name__ == "__main__":
     try:
         port = int(sys.argv[1])
         serv = socketserver.UDPServer(('', port), SIPRegisterHandler)
-        print("Lanzando servidor UDP de eco...")
+        print("Lanzando servidor UDP...")
         try:
             serv.serve_forever()
         except KeyboardInterrupt:
