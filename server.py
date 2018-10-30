@@ -20,7 +20,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         JSON file
         """
         json.dump(self.dic_clients, open('registered.json', 'w'))
-    
+
     def json2register(self):
         """
         Open JSON file and gets the dictionary
@@ -28,14 +28,16 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         try:
             with open('registered.json', 'r') as fich:
                 self.dic_clients = json.load(fich)
-        except (FileNotFoundError, ValueError,json.decoder.JSONDecodeError):
+        except (FileNotFoundError, ValueError, json.decoder.JSONDecodeError):
             pass
 
     def whohasexpired(self):
+        """
+        Search and delete the clients expired
+        """
         del_list = []
         now = time.strftime(
                             '%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))
-        print(now)
         for clients in self.dic_clients:
             if self.dic_clients[clients]["expires"] <= now:
                 del_list.append(clients)
@@ -49,7 +51,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         """
         if self.dic_clients == {}:
             self.json2register()
-            
         self.wfile.write(b"Hemos recibido tu peticion ")
         for line in self.rfile:
             linea_decod = line.decode('utf-8').split(" ")
@@ -66,7 +67,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 then = time.strftime(
                         '%Y-%m-%d %H:%M:%S', time.gmtime(
                                 time.time() + float((expires))))
-                
                 self.dic_clients[sip_address]["expires"] = then
                 if expires == '0':
                     del self.dic_clients[sip_address]
@@ -76,7 +76,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         self.register2json()
         print(self.client_address[0])
         print((self.client_address[1]))
-        
+
 
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001
@@ -84,8 +84,6 @@ if __name__ == "__main__":
     try:
         port = int(sys.argv[1])
         serv = socketserver.UDPServer(('', port), SIPRegisterHandler)
-        # '' escucha en todas las direcciones ip que tenga la maquina
-
         print("Lanzando servidor UDP de eco...")
         try:
             serv.serve_forever()

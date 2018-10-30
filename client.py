@@ -14,7 +14,6 @@ SERVER = 'localhost'
 try:
     ip = sys.argv[1]
     port = int(sys.argv[2])
-    # line = ' '.join(sys.argv[3::])
     register = sys.argv[3]
     sip_address = sys.argv[4]
     expires = sys.argv[5]
