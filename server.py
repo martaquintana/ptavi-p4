@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Clase (y programa principal) para un servidor de eco en UDP simple
-"""
+"""Clase (y programa principal) para un servidor de eco en UDP simple."""
 import json
 import socketserver
 import sys
@@ -10,21 +8,16 @@ import time
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
-    """
-    SIP Register server class
-    """
+    """SIP Register server class."""
+
     dic_clients = {}
 
     def register2json(self):
-        """
-        JSON file
-        """
+        """JSON file."""
         json.dump(self.dic_clients, open('registered.json', 'w'))
 
     def json2register(self):
-        """
-        Open JSON file and gets the dictionary
-        """
+        """Open JSON file and gets the dictionary."""
         try:
             with open('registered.json', 'r') as fich:
                 self.dic_clients = json.load(fich)
@@ -32,9 +25,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             pass
 
     def whohasexpired(self):
-        """
-        Search and delete the clients expired
-        """
+        """Search and delete the clients expired."""
         del_list = []
         now = time.strftime(
                             '%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))
@@ -45,10 +36,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             del self.dic_clients[clients]
 
     def handle(self):
-        """
-        handle method of the server class
-        (all requests will be handled by this method)
-        """
+        """Handle method of the server."""
         if self.dic_clients == {}:
             self.json2register()
         self.wfile.write(b"Hemos recibido tu peticion ")

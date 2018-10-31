@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Programa cliente UDP que abre un socket a un servidor
-"""
+"""Programa cliente UDP que abre un socket a un servidor."""
 
 import socket
 import sys
@@ -10,7 +8,6 @@ import sys
 # Constantes y Variables.
 # Dirección IP del servidor, puerto y contenido a enviar
 
-SERVER = 'localhost'
 try:
     ip = sys.argv[1]
     port = int(sys.argv[2])
@@ -20,7 +17,7 @@ try:
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
-        my_socket.connect((SERVER, port))
+        my_socket.connect((ip, port))
         if register == 'register':
             line = (
                 'REGISTER sip:' + sip_address
